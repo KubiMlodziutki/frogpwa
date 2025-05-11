@@ -1,13 +1,14 @@
 (() => {
   'use strict';
 
-  const frogImg = document.getElementById('frogImg');
-  const nextBtn = document.getElementById('nextFrogBtn');
-  const navLinks = document.querySelectorAll('.nav-link');
-  const views = document.querySelectorAll('.view');
-  const timeInput = document.getElementById('notifyTime');
-  const setBtn = document.getElementById('setNotifyBtn');
-  const statusLbl  = document.getElementById('notifyStatus');
+  const frogImg   = document.getElementById('frogImg');
+  const nextBtn   = document.getElementById('nextFrogBtn');
+  const navLinks  = document.querySelectorAll('.nav-link');
+  const views     = document.querySelectorAll('.view');
+  const setBtn    = document.getElementById('setNotifyBtn');
+  const statusLbl = document.getElementById('notifyStatus');
+
+  const VAPID_PUBLIC_KEY = 'BFZ6rY6PtQjWkmn7IUFGz3v8ReIC4-jaFlgfAzUI7_dwtZEF6cWmO5HBHIMtYwrM3buJubtoWru7tjfLp2h23SY';
 
   function showView(hash) {
     views.forEach(v => v.classList.add('hidden'));
@@ -19,7 +20,6 @@
   navLinks.forEach(link => link.addEventListener('click', () => showView(link.hash)));
 
   const frogCount = 9;
-
   const frogUrl = () => `images/zaba${Math.floor(Math.random() * frogCount) + 1}.jpg`;
 
   function loadFrog() {
@@ -29,75 +29,55 @@
   loadFrog();
   nextBtn.addEventListener('click', loadFrog);
 
-  let loopId = null;
-
-  async function ensurePerm() {
-    if (!('Notification' in window)) return false;
-    if (Notification.permission === 'granted') return true;
-
-    const res = await Notification.requestPermission();
-    return res === 'granted';
+  function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding)
+      .replace(/-/g, '+').replace(/_/g, '/');
+    const raw = atob(base64);
+    return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
   }
 
-  async function sendNotif() {
-    const reg = await navigator.serviceWorker.getRegistration();
-    if (reg) {
-      reg.showNotification('Frog time!', {
-        body : 'Tap to check whether frogs are okay 🐸',
-        icon : 'images/icon-192.png',
-        badge : 'images/icon-192.png'
-      });
+  async function subscribeUser() {
+    if (!('Notification' in window) || !('serviceWorker' in navigator)) {
+      statusLbl.textContent = 'Your browser does not support notifications.';
+      return;
     }
-  }
 
-  function startLoop(hour, minute) {
-    if (loopId) clearInterval(loopId);
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+      statusLbl.textContent = 'You need to allow notifications.';
+      return;
+    }
 
-    loopId = setInterval(() => {
-      const now = new Date();
-      if (now.getHours() === hour && now.getMinutes() === minute) {
-        sendNotif();
+    const reg = await navigator.serviceWorker.ready;
+
+    const existing = await reg.pushManager.getSubscription();
+    if (existing) {
+      statusLbl.textContent = 'You are already subscribed.';
+      return;
+    }
+
+    const sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+    });
+
+    await fetch('https://canyon-deep-mambo.glitch.me/subscribe', {
+      method: 'POST',
+      body: JSON.stringify(sub),
+      headers: {
+        'Content-Type': 'application/json'
       }
-    }, 60_000);
+    });
+
+    statusLbl.textContent = 'You’ll be notified when a new frog drops!';
   }
 
-  async function schedule() {
-    const [h, m] = timeInput.value.split(':').map(Number);
+  setBtn.addEventListener('click', subscribeUser);
 
-    if (isNaN(h) || isNaN(m)) {
-      statusLbl.textContent = 'Select time.';
-      return;
-    }
-
-    const ok = await ensurePerm();
-    if (!ok) {
-      statusLbl.textContent = 'Allow notifications.';
-      return;
-    }
-
-    localStorage.setItem('frogNotify', JSON.stringify({ h, m }));
-    startLoop(h, m);
-    statusLbl.textContent = `Notifaction is on ${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-  }
-
-  setBtn.addEventListener('click', schedule);
-
-  (() => {
-    const saved = JSON.parse(localStorage.getItem('frogNotify') || 'null');
-
-    if (saved) {
-      timeInput.value = `${String(saved.h).padStart(2, '0')}:${String(saved.m).padStart(2, '0')}`;
-      ensurePerm().then(ok => {
-        if (ok) startLoop(saved.h, saved.m);
-      });
-    }
-  })();
-
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-      .then(() => console.log('SW OK'))
-      .catch(err => console.error('SW error', err));
-  }
+  navigator.serviceWorker.register('sw.js')
+    .then(() => console.log('Service Worker registered'))
+    .catch(err => console.error('SW registration failed:', err));
 
   showView(location.hash || '#home');
 })();

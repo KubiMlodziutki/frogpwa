@@ -1,4 +1,4 @@
-const cacheName = 'frog-pwa-v2';
+const cacheName = 'frog-pwa-v3';
 const filesToCache = [
   'index.html', 'style.css', 'manifest.json', 'js/main.js',
   'images/icon-192.png', 'images/icon-512.png', 'images/portrait.jpg',
@@ -29,4 +29,26 @@ self.addEventListener('activate', e=>{
   e.waitUntil(caches.keys().then(keys=>
     Promise.all(keys.map(k=>k !== cacheName && caches.delete(k))))
   );
+});
+
+self.addEventListener('push', event => {
+  const data = event.data?.json() || {
+    title: 'Froglert',
+    body: 'Ayo, new frogg just dropped! 🐸',
+    icon: 'images/icon-192.png',
+    badge: 'images/icon-192.png'
+};
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: data.icon,
+      badge: data.badge
+    })
+  );
+});
+
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  event.waitUntil(clients.openWindow('index.html'));
 });
