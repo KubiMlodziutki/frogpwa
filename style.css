@@ -1,0 +1,81 @@
+html,body{
+  font-family: sans-serif;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.nav{
+  background: #2d8b34;
+  padding: 0.5rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.nav-link{
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.nav-link:hover{text-decoration : underline;}
+
+.view{padding: 2rem; font-size: 1rem;}
+
+.hidden{display: none;}
+
+h1{
+  font-size: 2.5rem;
+  margin-top: 0;
+  animation: fadeIn 1.5s ease-in-out;
+}
+
+.frog-container{
+  max-width: 600px;
+  margin: auto;
+}
+
+.frog-container img{
+  width: 100%;
+  aspect-ratio: 3/2;
+  object-fit: cover;
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .2);
+}
+
+button{
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  background: #2d8b34;
+  color: #fff;
+}
+
+button:hover{opacity: .9}
+
+@keyframes fadeIn{
+  from{opacity: 0; transform: translateY(-20px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+.portrait-container {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.portrait-img {
+    width: 260px;
+    height: auto;
+    border-radius: 1rem;
+    object-fit: cover;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    margin-bottom: 1rem;
+  }
+  
+  

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Frog PWA</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="images/icon-192.png">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+  <link rel="apple-touch-startup-image" href="images/splash-640-1136.jpg"  media="(device-width: 320px)  and (device-height: 568px)">
+  <link rel="apple-touch-startup-image" href="images/splash-750-1334.jpg"  media="(device-width: 375px)  and (device-height: 667px)">
+  <link rel="apple-touch-startup-image" href="images/splash-828-1792.jpg"  media="(device-width: 414px)  and (device-height: 896px)">
+  <link rel="apple-touch-startup-image" href="images/splash-1125-2436.jpg" media="(device-width: 375px)  and (device-height: 812px)">
+  <link rel="apple-touch-startup-image" href="images/splash-1242-2688.jpg" media="(device-width: 414px)  and (device-height: 896px)">
+  <link rel="apple-touch-startup-image" href="images/splash-1536-2048.jpg" media="(min-device-width: 768px) and (max-device-width: 1024px)">
+  <link rel="apple-touch-startup-image" href="images/splash-1668-2224.jpg" media="(min-device-width: 834px) and (max-device-width: 1112px)">
+  <link rel="apple-touch-startup-image" href="images/splash-1668-2388.jpg" media="(min-device-width: 834px) and (max-device-width: 1194px)">
+  <link rel="apple-touch-startup-image" href="images/splash-2048-2732.jpg" media="(min-device-width: 1024px) and (max-device-width: 1366px)">
+  <link rel="apple-touch-startup-image" href="images/apple-splash-393-852.jpg" media="(device-width: 393px) and (device-height: 852px)">
+
+  <link rel="stylesheet" href="style.css">
+
+  <meta name="theme-color" content="#2d8b34">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Frog PWA">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+
+</head>
+<body>
+  <nav class="nav">
+    <a href="#home" class="nav-link">Home</a>
+    <a href="#about" class="nav-link">About</a>
+    <a href="#notify" class="nav-link">Notify</a>
+  </nav>
+
+  <section id="home" class="view">
+    <h1>Generate some frogs here!</h1>
+
+    <div class="frog-container">
+      <img id="frogImg" alt="Random froglet">
+    </div>
+
+    <button id="nextFrogBtn">Other frog</button>
+  </section>
+
+  <section id="about" class="view hidden">
+    <h1>Really short - about me</h1>
+    <p>
+      I am a proffesional Frogographer, studying at the moment on WUST - ofc it is IT.
+    </p>
+    <p>
+      By the way you should be more interested in frog photos, check them before they go out missing!
+    </p>
+  
+    <div class="portrait-container">
+      <img src="images/portrait.jpg" alt="App author" class="portrait-img">
+      <p><strong>Creator: </strong>Jakub Gańko</p>
+    </div>
+  </section>
+
+  <section id="notify" class="view hidden">
+    <h1>Do not forget!</h1>
+    <p>set a reminder notification to watch the frogs every day at a specific time:</p>
+    <input type="time" id="notifyTime">
+    <button id="setNotifyBtn">Set notification</button>
+    <p id="notifyStatus"></p>
+  </section>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
